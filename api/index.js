@@ -5,7 +5,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const User = require("./models/user");
-const e = require("express");
+const download = require("image-downloader");
+const multer = require("multer");
+const fs = require("fs");
 
 require("dotenv").config();
 const app = express();
@@ -13,6 +15,7 @@ const app = express();
 const jwtSecret = "fasefraw4r5r3wq45wdfgw34twdfg";
 
 app.use(express.json());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
@@ -91,4 +94,29 @@ app.get("/profile", async (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
+});
+
+app.post("/uploadlink", async (req, res) => {
+  const { link } = req.body;
+  const newName = "Photo" + Date.now() + ".jpg";
+
+  await download.image({
+    url: link,
+    dest: __dirname + "/uploads/" + newName,
+  });
+  res.json(newName);
+});
+
+const upload = multer({ dest: "uploads/" });
+app.post("/upload", upload.array("photos", 100), (req, res) => {
+  const uploadedFiles = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const { path, originalname } = req.files[i];
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    const newpath = path + "." + ext;
+    fs.renameSync(path, newpath);
+    uploadedFiles.push(newpath.replace("uploads\\", ""));
+  }
+  res.json(uploadedFiles);
 });

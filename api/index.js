@@ -155,3 +155,50 @@ app.post("/places", (req, res) => {
     res.json(placeDoc);
   });
 });
+
+app.get("/places", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const places = await Place.find({ owner: userData.id });
+      res.json(places);
+    });
+  }
+});
+
+app.get("/places/:id", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const place = await Place.findById(req.params.id);
+      res.json(place);
+    });
+  }
+});
+
+app.put("/places", async (req, res) => {
+  const token = req.cookies.token;
+  const { id } = req.body;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+
+      const place = await Place.findById(id);
+      if (userData.id === place.owner.toString()) {
+        place.title = req.body.title;
+        place.address = req.body.address;
+        place.description = req.body.description;
+        place.perks = req.body.perks;
+        place.extraInfo = req.body.extraInfo;
+        place.checkIn = req.body.checkIn;
+        place.checkOut = req.body.checkOut;
+        place.maxGuests = req.body.maxGuests;
+        place.photos = req.body.addedPhotos;
+        await place.save();
+        res.json(place);
+      }
+    });
+  }
+});

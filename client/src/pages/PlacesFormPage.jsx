@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import PhotosUploader from "../PhotosUploader";
 import AccountNav from "../AccountNav";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 const PlacesFormPage = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -16,6 +17,25 @@ const PlacesFormPage = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   //const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    axios.get(`http://localhost:4000/places/${id}`).then((response) => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.photos);
+      setPerks(data.perks);
+      setDescription(data.description);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      //setPrice(data.price);
+    });
+  }, [id]);
 
   /// Inside your PlacesPage component
   const handleCbClick = (event) => {
@@ -39,7 +59,7 @@ const PlacesFormPage = () => {
     }
   };
 
-  async function addNewPlace(ev) {
+  async function savePlace(ev) {
     ev.preventDefault();
     const placeData = {
       title,
@@ -52,10 +72,19 @@ const PlacesFormPage = () => {
       checkOut,
       maxGuests,
     };
+    if (id) {
+      //update
+      await axios.put("http://localhost:4000/places", {
+        id,
+        ...placeData,
+      });
+      setRedirect(true);
+    } else {
+      //create new place
 
-    // new place
-    await axios.post("http://localhost:4000/places", placeData);
-    setRedirect(true);
+      await axios.post("http://localhost:4000/places", placeData);
+      setRedirect(true);
+    }
   }
 
   if (redirect) {
@@ -66,7 +95,7 @@ const PlacesFormPage = () => {
     <>
       <div>
         <AccountNav />
-        <form onSubmit={addNewPlace}>
+        <form onSubmit={savePlace}>
           <h2 className="text-xl mt-4">Title</h2>
           <input
             type="text"
@@ -91,7 +120,13 @@ const PlacesFormPage = () => {
           <h2 className="text-xl mt-4">Perks</h2>
           <div className="mt-2 grid md:grid-cols-2 lg:grid-cols-4">
             <label className="flex gap-1">
-              <input name="wifi" onChange={handleCbClick} type="checkbox" />
+              {/* checked attribute is to check whether the corresponding perk (e.g., "wifi," "parking," or "TV") is included in the perks array. This will ensure that the checkboxes are checked when the associated perk is in the perks when displaying them */}
+              <input
+                name="wifi"
+                checked={perks.includes("wifi")}
+                onChange={handleCbClick}
+                type="checkbox"
+              />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -106,11 +141,15 @@ const PlacesFormPage = () => {
                   d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z"
                 />
               </svg>
-
               <span>Wifi</span>
             </label>
             <label className="flex gap-1">
-              <input name="parking" onChange={handleCbClick} type="checkbox" />
+              <input
+                name="parking"
+                checked={perks.includes("parking")}
+                onChange={handleCbClick}
+                type="checkbox"
+              />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -129,7 +168,12 @@ const PlacesFormPage = () => {
               <span>Free parking</span>
             </label>
             <label className="flex gap-1">
-              <input name="TV" onChange={handleCbClick} type="checkbox" />
+              <input
+                name="TV"
+                checked={perks.includes("TV")}
+                onChange={handleCbClick}
+                type="checkbox"
+              />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

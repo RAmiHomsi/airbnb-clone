@@ -156,7 +156,7 @@ app.post("/places", (req, res) => {
   });
 });
 
-app.get("/places", async (req, res) => {
+app.get("/user-places", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -196,9 +196,14 @@ app.put("/places", async (req, res) => {
         place.checkOut = req.body.checkOut;
         place.maxGuests = req.body.maxGuests;
         place.photos = req.body.addedPhotos;
+        place.price = req.body.price;
         await place.save();
         res.json(place);
       }
     });
   }
+});
+
+app.get("/places", async (req, res) => {
+  res.json(await Place.find());
 });

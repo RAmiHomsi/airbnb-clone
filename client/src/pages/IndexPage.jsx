@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const IndexPage = () => {
   const [places, setPlaces] = useState([]);
@@ -13,8 +14,8 @@ const IndexPage = () => {
       {places.length > 0 &&
         places.map((place) => {
           return (
-            <div key={place.id}>
-              <div className="bg-gray-500 rounded-2xl">
+            <Link to={"/place/" + place._id} key={place.id}>
+              <div className="bg-gray-500 mb-2 rounded-2xl flex">
                 {place.photos?.[0] && (
                   <img
                     className="rounded-2xl"
@@ -30,7 +31,7 @@ const IndexPage = () => {
                 {" "}
                 <span className="font-bold">${place.price}</span> per night
               </div>
-            </div>
+            </Link>
           );
         })}
     </div>

@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 var cookieParser = require("cookie-parser");
 const User = require("./models/user");
 const Place = require("./models/place");
+const Booking = require("./models/booking");
 const download = require("image-downloader");
 const multer = require("multer");
 const fs = require("fs");
@@ -161,21 +162,15 @@ app.get("/user-places", async (req, res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const places = await Place.find({ owner: userData.id });
-      res.json(places);
+      const { id } = userData;
+      res.json(await Place.find({ owner: id }));
     });
   }
 });
 
 app.get("/places/:id", async (req, res) => {
-  const token = req.cookies.token;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const place = await Place.findById(req.params.id);
-      res.json(place);
-    });
-  }
+  const { id } = req.params;
+  res.json(await Place.findById(id));
 });
 
 app.put("/places", async (req, res) => {
@@ -206,4 +201,42 @@ app.put("/places", async (req, res) => {
 
 app.get("/places", async (req, res) => {
   res.json(await Place.find());
+});
+
+app.post("/booking", (req, res) => {
+  const token = req.cookies.token;
+  const { place, checkIn, checkOut, numberGuest, name, phone, totalPrice } =
+    req.body;
+
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      Booking.create({
+        place,
+        checkIn,
+        checkOut,
+        maxGuests: numberGuest,
+        name,
+        phone,
+        price: totalPrice,
+        user: userData.id,
+      })
+        .then((doc) => {
+          res.json(doc);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  }
+});
+
+app.get("/booking", async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      res.json(await Booking.find({ user: userData.id }));
+    });
+  }
 });

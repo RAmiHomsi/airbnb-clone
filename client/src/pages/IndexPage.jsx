@@ -14,7 +14,7 @@ const IndexPage = () => {
       {places.length > 0 &&
         places.map((place) => {
           return (
-            <Link to={"/place/" + place._id} key={place.id}>
+            <Link to={"/place/" + place._id} key={place._id}>
               <div className="bg-gray-500 mb-2 rounded-2xl flex">
                 {place.photos?.[0] && (
                   <img

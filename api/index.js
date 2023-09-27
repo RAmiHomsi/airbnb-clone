@@ -236,7 +236,7 @@ app.get("/booking", async (req, res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      res.json(await Booking.find({ user: userData.id }));
+      res.json(await Booking.find({ user: userData.id }).populate("place"));
     });
   }
 });

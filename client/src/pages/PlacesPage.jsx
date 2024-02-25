@@ -8,9 +8,11 @@ const PlacesPage = () => {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:4000/user-places").then(({ data }) => {
-      setPlaces(data);
-    });
+    axios
+      .get("https://airbnb-clone-tawny-chi.vercel.app/user-places")
+      .then(({ data }) => {
+        setPlaces(data);
+      });
   }, []);
   return (
     <div>

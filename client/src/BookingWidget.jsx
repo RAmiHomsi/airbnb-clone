@@ -43,7 +43,10 @@ export default function BookingWidget({ place }) {
       place: place._id,
       totalPrice,
     };
-    const { data } = await axios.post("http://localhost:4000/booking", info);
+    const { data } = await axios.post(
+      "https://airbnb-clone-tawny-chi.vercel.app/booking",
+      info
+    );
     const bookingId = data._id;
     setRedirect(`/account/bookings/${bookingId}`);
   }

@@ -9,7 +9,7 @@ export default function RegisterPage() {
   async function registerUser(ev) {
     ev.preventDefault();
     try {
-      await axios.post("http://localhost:4000/register", {
+      await axios.post("https://airbnb-clone-tawny-chi.vercel.app/register", {
         name,
         email,
         password,

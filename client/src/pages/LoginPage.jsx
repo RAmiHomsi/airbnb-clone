@@ -11,10 +11,13 @@ export default function LoginPage() {
   async function handleLoginSubmit(ev) {
     ev.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://airbnb-clone-tawny-chi.vercel.app/login",
+        {
+          email,
+          password,
+        }
+      );
       setUser(response.data);
       alert("Login successful");
       setRedirect(true);

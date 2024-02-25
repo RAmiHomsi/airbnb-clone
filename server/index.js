@@ -23,7 +23,7 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
-    origin: ["deployed-vercel-frontend-app", "localhost:4000"],
+    origin: ["https://airbnb-clone-cfkm.vercel.app/", "localhost:4000"],
     methods: ["POST", "GET", "DELETE", "PUT"],
     credentials: true,
   })

@@ -6,9 +6,11 @@ import Image from "../Image";
 export default function BookingsPage() {
   const [bookings, setBookings] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:4000/booking").then((response) => {
-      setBookings(response.data);
-    });
+    axios
+      .get("https://airbnb-clone-tawny-chi.vercel.app/booking")
+      .then((response) => {
+        setBookings(response.data);
+      });
   }, []);
   return (
     <div>

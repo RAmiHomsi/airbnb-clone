@@ -13,9 +13,11 @@ export default function PlacePage() {
     if (!id) {
       return;
     }
-    axios.get(`http://localhost:4000/places/${id}`).then((response) => {
-      setPlace(response.data);
-    });
+    axios
+      .get(`https://airbnb-clone-tawny-chi.vercel.app/places/${id}`)
+      .then((response) => {
+        setPlace(response.data);
+      });
   }, [id]);
 
   // Conditional rendering when place is still null

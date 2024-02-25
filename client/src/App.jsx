@@ -5,13 +5,13 @@ import LoginPage from "./pages/LoginPage";
 import Layout from "./Layout";
 import RegisterPage from "./pages/RegisterPage";
 import axios from "axios";
-import { UserContextProvider } from "./userContext";
 import Account from "./pages/Account";
 import PlacesPage from "./pages/PlacesPage";
 import PlacesFormPage from "./pages/PlacesFormPage";
 import PlacePage from "./pages/PlacePage";
 import BookingsPage from "./pages/BookingsPage";
 import BookingPage from "./pages/BookingPage";
+import { UserContextProvider } from "./userContext";
 
 axios.defaults.withCredentials = true;
 

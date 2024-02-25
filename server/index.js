@@ -23,8 +23,9 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
+    origin: ["deployed-vercel-frontend-app", "localhost:4000"],
+    methods: ["POST", "GET", "DELETE", "PUT"],
     credentials: true,
-    origin: "http://localhost:5173",
   })
 );
 
@@ -55,21 +56,28 @@ mongoose
   .connect(process.env.MONGO_URL)
   .then((conn) => {
     console.log("Connected to MongoDB");
+    app.listen(4000, () => {
+      console.log("Server is listening on port 4000");
+    });
   })
   .catch((err) => {
     console.log(err);
     process.exit(1);
   });
 
-app.post("/api/register", async (req, res) => {
+app.get("/", (req, res) => {
+  res.json("Hello");
+});
+
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
     const userDoc = await User.create({
       name,
       email,
-      password: hashedPassword, // Store the hashed password in the database
+      password: hashedPassword,
     });
     res.json(userDoc);
   } catch (e) {
@@ -77,7 +85,8 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post("/api/login", async (req, res) => {
+// Backend: Change the login route to '/login'
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
   if (userDoc) {
@@ -91,20 +100,23 @@ app.post("/api/login", async (req, res) => {
         jwtSecret,
         {},
         (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(userDoc);
+          if (err) {
+            res.status(500).json({ error: "Internal Server Error" });
+          } else {
+            res.cookie("token", token, { httpOnly: true }).json(userDoc);
+          }
         }
       );
     } else {
-      res.status(422).json("pass not ok");
+      res.status(401).json({ error: "Invalid credentials" });
     }
   } else {
-    res.json("not found");
+    res.status(404).json({ error: "User not found" });
   }
 });
 
 //to have the user logged in
-app.get("/api/profile", async (req, res) => {
+app.get("/profile", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, decoded) => {
@@ -117,11 +129,11 @@ app.get("/api/profile", async (req, res) => {
   }
 });
 
-app.post("/api/logout", (req, res) => {
+app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
-app.post("/api/uploadlink", async (req, res) => {
+app.post("/uploadlink", async (req, res) => {
   const { link } = req.body;
   const newName = "photo" + Date.now() + ".jpg";
   await imageDownloader.image({
@@ -151,7 +163,7 @@ app.post("/upload", upload.array("photos", 100), (req, res) => {
 }); */
 
 const upload = multer({ dest: "/tmp" });
-app.post("/api/upload", upload.array("photos", 100), async (req, res) => {
+app.post("/upload", upload.array("photos", 100), async (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
     const { path, originalname, mimetype } = req.files[i];
@@ -161,7 +173,7 @@ app.post("/api/upload", upload.array("photos", 100), async (req, res) => {
   res.json(uploadedFiles);
 });
 
-app.post("/api/places", (req, res) => {
+app.post("/places", (req, res) => {
   const { token } = req.cookies;
   const {
     title,
@@ -195,7 +207,7 @@ app.post("/api/places", (req, res) => {
   });
 });
 
-app.get("/api/user-places", async (req, res) => {
+app.get("/user-places", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -206,12 +218,12 @@ app.get("/api/user-places", async (req, res) => {
   }
 });
 
-app.get("/api/places/:id", async (req, res) => {
+app.get("/places/:id", async (req, res) => {
   const { id } = req.params;
   res.json(await Place.findById(id));
 });
 
-app.put("/api/places", async (req, res) => {
+app.put("/places", async (req, res) => {
   const token = req.cookies.token;
   const { id } = req.body;
   if (token) {
@@ -237,11 +249,11 @@ app.put("/api/places", async (req, res) => {
   }
 });
 
-app.get("/api/places", async (req, res) => {
+app.get("/places", async (req, res) => {
   res.json(await Place.find());
 });
 
-app.post("/api/booking", (req, res) => {
+app.post("/booking", (req, res) => {
   const token = req.cookies.token;
   const { place, checkIn, checkOut, numberGuest, name, phone, totalPrice } =
     req.body;
@@ -269,7 +281,7 @@ app.post("/api/booking", (req, res) => {
   }
 });
 
-app.get("/api/booking", async (req, res) => {
+app.get("/booking", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {

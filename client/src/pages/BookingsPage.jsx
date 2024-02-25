@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AccountNav from "../AccountNav";
 import axios from "axios";
+import Image from "../Image";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState([]);
@@ -21,11 +22,9 @@ export default function BookingsPage() {
             >
               <div className="w-48">
                 {booking.place.photos.length > 0 && (
-                  <img
+                  <Image
                     className="object-cover"
-                    src={
-                      "http://localhost:4000/uploads/" + booking.place.photos[0]
-                    }
+                    src={booking.place.photos[0]}
                   />
                 )}
               </div>

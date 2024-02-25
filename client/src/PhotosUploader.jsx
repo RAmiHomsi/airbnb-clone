@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import Image from "./Image.jsx";
 
 const PhotosUploader = ({ addedPhotos, onChange }) => {
   const [photoLink, setPhotoLink] = useState("");
@@ -68,9 +69,9 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
           addedPhotos.map((link, index) => {
             return (
               <div className="h-32 flex relative" key={index}>
-                <img
+                <Image
                   className="rounded-2xl w-full object-cover"
-                  src={"http://localhost:4000/uploads/" + link}
+                  src={link}
                   alt=""
                 />
                 <button

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Image from "../Image.jsx";
 
 const IndexPage = () => {
   const [places, setPlaces] = useState([]);
@@ -17,10 +18,10 @@ const IndexPage = () => {
             <Link to={"/place/" + place._id} key={place._id}>
               <div className="bg-gray-500 mb-2 rounded-2xl flex">
                 {place.photos?.[0] && (
-                  <img
-                    className="rounded-2xl"
-                    src={"http://localhost:4000/uploads/" + place.photos?.[0]}
-                    alt={place.name}
+                  <Image
+                    className="rounded-2xl object-cover aspect-square"
+                    src={place.photos?.[0]}
+                    alt=""
                   />
                 )}
               </div>

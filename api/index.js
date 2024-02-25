@@ -7,14 +7,16 @@ var cookieParser = require("cookie-parser");
 const User = require("./models/user");
 const Place = require("./models/place");
 const Booking = require("./models/booking");
-const download = require("image-downloader");
-const multer = require("multer");
+const mime = require("mime-types");
 const fs = require("fs");
+const multer = require("multer");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 require("dotenv").config();
 const app = express();
 
 const jwtSecret = "fasefraw4r5r3wq45wdfgw34twdfg";
+const bucket = "airbnb--clone";
 
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
@@ -26,27 +28,48 @@ app.use(
   })
 );
 
+async function uploadToS3(path, originalFilename, mimetype) {
+  const client = new S3Client({
+    region: "us-east-1",
+    credentials: {
+      accessKeyId: process.env.MY_S3_ACCESS_KEY,
+      secretAccessKey: process.env.MY_S3_SECRET_KEY,
+    },
+  });
+  const parts = originalFilename.split(".");
+  const ext = parts[parts.length - 1];
+  const newFilename = Date.now() + "." + ext;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Body: fs.readFileSync(path),
+      Key: newFilename,
+      ContentType: mimetype,
+      ACL: "public-read",
+    })
+  );
+  return `https://${bucket}.s3.amazonaws.com/${newFilename}`;
+}
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then((conn) => {
-    console.log("Connected to MongoDB: " + conn.connection.host);
-  })
-  .then(() => {
-    app.listen(4000, () => console.log("Server running on port 4000"));
+    console.log("Connected to MongoDB");
   })
   .catch((err) => {
     console.log(err);
     process.exit(1);
   });
 
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     const userDoc = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword, // Store the hashed password in the database
     });
     res.json(userDoc);
   } catch (e) {
@@ -54,7 +77,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
   if (userDoc) {
@@ -81,7 +104,7 @@ app.post("/login", async (req, res) => {
 });
 
 //to have the user logged in
-app.get("/profile", async (req, res) => {
+app.get("/api/profile", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, decoded) => {
@@ -94,22 +117,26 @@ app.get("/profile", async (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   res.cookie("token", "").json(true);
 });
 
-app.post("/uploadlink", async (req, res) => {
+app.post("/api/uploadlink", async (req, res) => {
   const { link } = req.body;
-  const newName = "Photo" + Date.now() + ".jpg";
-
-  await download.image({
+  const newName = "photo" + Date.now() + ".jpg";
+  await imageDownloader.image({
     url: link,
-    dest: __dirname + "/uploads/" + newName,
+    dest: "/tmp/" + newName,
   });
-  res.json(newName);
+  const url = await uploadToS3(
+    "/tmp/" + newName,
+    newName,
+    mime.lookup("/tmp/" + newName)
+  );
+  res.json(url);
 });
 
-const upload = multer({ dest: "uploads/" });
+/* const upload = multer({ dest: "uploads/" });
 app.post("/upload", upload.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
@@ -121,9 +148,20 @@ app.post("/upload", upload.array("photos", 100), (req, res) => {
     uploadedFiles.push(newpath.replace("uploads\\", ""));
   }
   res.json(uploadedFiles);
+}); */
+
+const upload = multer({ dest: "/tmp" });
+app.post("/api/upload", upload.array("photos", 100), async (req, res) => {
+  const uploadedFiles = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const { path, originalname, mimetype } = req.files[i];
+    const url = await uploadToS3(path, originalname, mimetype);
+    uploadedFiles.push(url);
+  }
+  res.json(uploadedFiles);
 });
 
-app.post("/places", (req, res) => {
+app.post("/api/places", (req, res) => {
   const { token } = req.cookies;
   const {
     title,
@@ -157,7 +195,7 @@ app.post("/places", (req, res) => {
   });
 });
 
-app.get("/user-places", async (req, res) => {
+app.get("/api/user-places", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -168,12 +206,12 @@ app.get("/user-places", async (req, res) => {
   }
 });
 
-app.get("/places/:id", async (req, res) => {
+app.get("/api/places/:id", async (req, res) => {
   const { id } = req.params;
   res.json(await Place.findById(id));
 });
 
-app.put("/places", async (req, res) => {
+app.put("/api/places", async (req, res) => {
   const token = req.cookies.token;
   const { id } = req.body;
   if (token) {
@@ -199,11 +237,11 @@ app.put("/places", async (req, res) => {
   }
 });
 
-app.get("/places", async (req, res) => {
+app.get("/api/places", async (req, res) => {
   res.json(await Place.find());
 });
 
-app.post("/booking", (req, res) => {
+app.post("/api/booking", (req, res) => {
   const token = req.cookies.token;
   const { place, checkIn, checkOut, numberGuest, name, phone, totalPrice } =
     req.body;
@@ -231,7 +269,7 @@ app.post("/booking", (req, res) => {
   }
 });
 
-app.get("/booking", async (req, res) => {
+app.get("/api/booking", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {

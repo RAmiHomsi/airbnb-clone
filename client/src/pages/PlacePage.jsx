@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BookingWidget from "../BookingWidget";
+import Image from "../Image";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ export default function PlacePage() {
           {place?.photos?.length > 0 &&
             place.photos.map((photo, index) => (
               <div key={index}>
-                <img src={"http://localhost:4000/uploads/" + photo} alt="" />
+                <Image src={photo} alt="" />
               </div>
             ))}
         </div>
@@ -96,9 +97,9 @@ export default function PlacePage() {
           <div>
             {place.photos?.[0] && (
               <div>
-                <img
+                <Image
                   className="aspect-squre object-cover"
-                  src={"http://localhost:4000/uploads/" + place.photos?.[0]}
+                  src={place.photos?.[0]}
                   alt=""
                 />
               </div>
@@ -106,17 +107,17 @@ export default function PlacePage() {
           </div>
           <div className="grid">
             {place.photos?.[1] && (
-              <img
+              <Image
                 className="aspect-squre object-cover"
-                src={"http://localhost:4000/uploads/" + place.photos?.[1]}
+                src={place.photos?.[1]}
                 alt=""
               />
             )}
             <div className="overflow-hidden">
               {place.photos?.[2] && (
-                <img
+                <Image
                   className="aspect-squre object-cover relative top-2"
-                  src={"http://localhost:4000/uploads/" + place.photos?.[2]}
+                  src={place.photos?.[2]}
                   alt=""
                 />
               )}

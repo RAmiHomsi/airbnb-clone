@@ -11,7 +11,7 @@ import PlacesFormPage from "./pages/PlacesFormPage";
 import PlacePage from "./pages/PlacePage";
 import BookingsPage from "./pages/BookingsPage";
 import BookingPage from "./pages/BookingPage";
-import { UserContextProvider } from "./userContext";
+import { UserContextProvider } from "./UserContext";
 
 axios.defaults.withCredentials = true;
 

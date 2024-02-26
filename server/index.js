@@ -113,7 +113,7 @@ app.post("/login", async (req, res) => {
             json({
               success: true,
               userDoc,
-              //token,
+              token,
             });
           }
         }

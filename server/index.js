@@ -22,9 +22,8 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
-    origin: ["https://airbnb-clone-front-bay.vercel.app"],
-    methods: ["POST", "GET", "DELETE", "PUT"],
-    credentials: true,
+    origin: "https://airbnb-clone-front-bay.vercel.app", // Allow requests from this origin
+    credentials: true, // Allow cookies to be sent along with requests
   })
 );
 

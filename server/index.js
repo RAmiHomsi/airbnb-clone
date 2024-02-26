@@ -23,6 +23,7 @@ app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
     origin: "https://airbnb-clone-front-bay.vercel.app", // Allow requests from this origin
+    methods: ["POST", "GET"],
     credentials: true, // Allow cookies to be sent along with requests
   })
 );

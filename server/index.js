@@ -20,7 +20,12 @@ const bucket = "airbnb--clone";
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://airbnb-clone-cfkm.vercel.app"],
+    credentials: true,
+  })
+);
 
 async function uploadToS3(path, originalFilename, mimetype) {
   const client = new S3Client({

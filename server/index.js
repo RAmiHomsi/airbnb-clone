@@ -15,7 +15,6 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 require("dotenv").config();
 const app = express();
 
-const jwtSecret = "fasefraw4r5r3wq45wdfgw34twdfg";
 const bucket = "airbnb--clone";
 
 app.use(express.json());
@@ -97,13 +96,23 @@ app.post("/login", async (req, res) => {
           email: userDoc.email,
           id: userDoc._id,
         },
-        jwtSecret,
-        {},
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30d",
+        },
+
         (err, token) => {
           if (err) {
             res.status(500).json({ error: "Internal Server Error" });
           } else {
-            res.cookie("token", token, { httpOnly: true }).json(userDoc);
+            res
+              .cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV !== "development",
+                sameSite: "strict",
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+              })
+              .json(userDoc);
           }
         }
       );
@@ -119,7 +128,7 @@ app.post("/login", async (req, res) => {
 app.get("/profile", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) throw err;
       const { email, name, _id } = await User.findById(decoded.id);
       res.json({ email, name, _id });
@@ -188,7 +197,7 @@ app.post("/places", (req, res) => {
     maxGuests,
   } = req.body;
 
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, userData) => {
     if (err) throw err;
     const placeDoc = await Place.create({
       owner: userData.id,
@@ -210,7 +219,7 @@ app.post("/places", (req, res) => {
 app.get("/user-places", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, userData) => {
       if (err) throw err;
       const { id } = userData;
       res.json(await Place.find({ owner: id }));
@@ -227,7 +236,7 @@ app.put("/places", async (req, res) => {
   const token = req.cookies.token;
   const { id } = req.body;
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, userData) => {
       if (err) throw err;
 
       const place = await Place.findById(id);
@@ -259,7 +268,7 @@ app.post("/booking", (req, res) => {
     req.body;
 
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, userData) => {
       if (err) throw err;
       Booking.create({
         place,
@@ -284,7 +293,7 @@ app.post("/booking", (req, res) => {
 app.get("/booking", async (req, res) => {
   const token = req.cookies.token;
   if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    jwt.verify(token, process.env.JWT_SECRET, async (err, userData) => {
       if (err) throw err;
       res.json(await Booking.find({ user: userData.id }).populate("place"));
     });

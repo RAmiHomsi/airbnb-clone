@@ -23,7 +23,6 @@ app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
     origin: "*",
-    methods: ["POST", "GET", "DELETE", "PUT"],
   })
 );
 

@@ -105,14 +105,16 @@ app.post("/login", async (req, res) => {
           if (err) {
             res.status(500).json({ error: "Internal Server Error" });
           } else {
-            res
-              .cookie("token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV !== "development",
-                sameSite: "strict",
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-              })
-              .json(userDoc);
+            res.cookie("token", token, {
+              secure: true, //use this when the code is in production for https cookie request
+              sameSite: "None", //dealing with cross-site requests and the usage of third-party cookies
+              maxAge: 30 * 24 * 60 * 60 * 1000,
+            });
+            json({
+              success: true,
+              userDoc,
+              //token,
+            });
           }
         }
       );

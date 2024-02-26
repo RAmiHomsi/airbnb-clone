@@ -20,11 +20,12 @@ const bucket = "airbnb--clone";
 app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
-app.use(
+app.options(
+  "*",
   cors({
-    origin: "https://airbnb-clone-front-bay.vercel.app", // Allow requests from this origin
-    methods: ["POST", "GET"],
-    credentials: true, // Allow cookies to be sent along with requests
+    origin: ["https://airbnb-clone-front-bay.vercel.app"],
+    methods: ["POST", "GET", "DELETE", "PUT"],
+    credentials: true,
   })
 );
 

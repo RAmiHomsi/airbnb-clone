@@ -92,32 +92,21 @@ app.post("/login", async (req, res) => {
   if (userDoc) {
     const passOk = bcrypt.compareSync(password, userDoc.password);
     if (passOk) {
-      jwt.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-        },
+      const token = jwt.sign(
+        { email: userDoc.email, id: userDoc._id },
         process.env.JWT_SECRET,
         {
           expiresIn: "30d",
-        },
-
-        (err, token) => {
-          if (err) {
-            res.status(500).json({ error: "Internal Server Error" });
-          } else {
-            res
-              .cookie("token", token, {
-                secure: true, //use this when the code is in production for https cookie request
-                sameSite: "None", //dealing with cross-site requests and the usage of third-party cookies
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-              })
-              .json(userDoc);
-          }
         }
       );
-    } else {
-      res.status(401).json({ error: "Invalid credentials" });
+
+      res
+        .cookie("token", token, {
+          secure: true,
+          sameSite: "None",
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        })
+        .json(userDoc);
     }
   } else {
     res.status(404).json({ error: "User not found" });

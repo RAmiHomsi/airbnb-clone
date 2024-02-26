@@ -9,12 +9,10 @@ export function UserContextProvider({ children }) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
     if (!user) {
-      axios
-        .get("https://airbnb-clone-coral-six-59.vercel.app/profile")
-        .then(({ data }) => {
-          setUser(data);
-          setReady(true);
-        });
+      axios.get("/profile").then(({ data }) => {
+        setUser(data);
+        setReady(true);
+      });
     }
   }, []);
   return (

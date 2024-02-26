@@ -8,11 +8,9 @@ const PlacesPage = () => {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("https://airbnb-clone-coral-six-59.vercel.app/user-places")
-      .then(({ data }) => {
-        setPlaces(data);
-      });
+    axios.get("/user-places").then(({ data }) => {
+      setPlaces(data);
+    });
   }, []);
   return (
     <div>

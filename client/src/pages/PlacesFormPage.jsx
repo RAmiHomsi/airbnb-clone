@@ -22,21 +22,19 @@ const PlacesFormPage = () => {
     if (!id) {
       return;
     }
-    axios
-      .get(`https://airbnb-clone-coral-six-59.vercel.app/places/${id}`)
-      .then((response) => {
-        const { data } = response;
-        setTitle(data.title);
-        setAddress(data.address);
-        setAddedPhotos(data.photos);
-        setPerks(data.perks);
-        setDescription(data.description);
-        setExtraInfo(data.extraInfo);
-        setCheckIn(data.checkIn);
-        setCheckOut(data.checkOut);
-        setMaxGuests(data.maxGuests);
-        setPrice(data.price);
-      });
+    axios.get(`/places/${id}`).then((response) => {
+      const { data } = response;
+      setTitle(data.title);
+      setAddress(data.address);
+      setAddedPhotos(data.photos);
+      setPerks(data.perks);
+      setDescription(data.description);
+      setExtraInfo(data.extraInfo);
+      setCheckIn(data.checkIn);
+      setCheckOut(data.checkOut);
+      setMaxGuests(data.maxGuests);
+      setPrice(data.price);
+    });
   }, [id]);
 
   /// Inside your PlacesPage component
@@ -77,7 +75,7 @@ const PlacesFormPage = () => {
     };
     if (id) {
       //update
-      await axios.put("https://airbnb-clone-coral-six-59.vercel.app/places", {
+      await axios.put("/places", {
         id,
         ...placeData,
       });
@@ -85,10 +83,7 @@ const PlacesFormPage = () => {
     } else {
       //create new place
 
-      await axios.post(
-        "https://airbnb-clone-coral-six-59.vercel.app/places",
-        placeData
-      );
+      await axios.post("/places", placeData);
       setRedirect(true);
     }
   }

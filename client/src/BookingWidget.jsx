@@ -43,10 +43,7 @@ export default function BookingWidget({ place }) {
       place: place._id,
       totalPrice,
     };
-    const { data } = await axios.post(
-      "https://airbnb-clone-coral-six-59.vercel.app/booking",
-      info
-    );
+    const { data } = await axios.post("/booking", info);
     const bookingId = data._id;
     setRedirect(`/account/bookings/${bookingId}`);
   }

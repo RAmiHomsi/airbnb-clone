@@ -13,11 +13,9 @@ export default function PlacePage() {
     if (!id) {
       return;
     }
-    axios
-      .get(`https://airbnb-clone-coral-six-59.vercel.app/places/${id}`)
-      .then((response) => {
-        setPlace(response.data);
-      });
+    axios.get(`/places/${id}`).then((response) => {
+      setPlace(response.data);
+    });
   }, [id]);
 
   // Conditional rendering when place is still null

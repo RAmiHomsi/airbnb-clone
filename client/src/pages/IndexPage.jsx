@@ -6,11 +6,9 @@ import Image from "../Image.jsx";
 const IndexPage = () => {
   const [places, setPlaces] = useState([]);
   useEffect(() => {
-    axios
-      .get("https://airbnb-clone-coral-six-59.vercel.app/places")
-      .then((response) => {
-        setPlaces(response.data);
-      });
+    axios.get("/places").then((response) => {
+      setPlaces(response.data);
+    });
   }, []);
   return (
     <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

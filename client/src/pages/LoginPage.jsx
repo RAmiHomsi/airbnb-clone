@@ -11,13 +11,10 @@ export default function LoginPage() {
   async function handleLoginSubmit(ev) {
     ev.preventDefault();
     try {
-      const response = await axios.post(
-        "https://airbnb-clone-coral-six-59.vercel.app/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("/login", {
+        email,
+        password,
+      });
       setUser(response.data);
       alert("Login successful");
       setRedirect(true);

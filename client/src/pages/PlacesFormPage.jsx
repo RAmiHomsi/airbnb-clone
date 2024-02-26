@@ -23,7 +23,7 @@ const PlacesFormPage = () => {
       return;
     }
     axios
-      .get(`https://airbnb-clone-tawny-chi.vercel.app/places/${id}`)
+      .get(`https://airbnb-clone-coral-six-59.vercel.app/places/${id}`)
       .then((response) => {
         const { data } = response;
         setTitle(data.title);
@@ -77,7 +77,7 @@ const PlacesFormPage = () => {
     };
     if (id) {
       //update
-      await axios.put("https://airbnb-clone-tawny-chi.vercel.app/places", {
+      await axios.put("https://airbnb-clone-coral-six-59.vercel.app/places", {
         id,
         ...placeData,
       });
@@ -86,7 +86,7 @@ const PlacesFormPage = () => {
       //create new place
 
       await axios.post(
-        "https://airbnb-clone-tawny-chi.vercel.app/places",
+        "https://airbnb-clone-coral-six-59.vercel.app/places",
         placeData
       );
       setRedirect(true);

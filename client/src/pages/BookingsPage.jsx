@@ -7,7 +7,7 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState([]);
   useEffect(() => {
     axios
-      .get("https://airbnb-clone-tawny-chi.vercel.app/booking")
+      .get("https://airbnb-clone-coral-six-59.vercel.app/booking")
       .then((response) => {
         setBookings(response.data);
       });

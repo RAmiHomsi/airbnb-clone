@@ -7,7 +7,7 @@ const IndexPage = () => {
   const [places, setPlaces] = useState([]);
   useEffect(() => {
     axios
-      .get("https://airbnb-clone-tawny-chi.vercel.app/places")
+      .get("https://airbnb-clone-coral-six-59.vercel.app/places")
       .then((response) => {
         setPlaces(response.data);
       });

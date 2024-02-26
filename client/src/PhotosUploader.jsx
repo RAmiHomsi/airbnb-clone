@@ -7,7 +7,7 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
   async function addPhotoByLink(e) {
     e.preventDefault();
     const { data } = await axios.post(
-      "https://airbnb-clone-tawny-chi.vercel.app/uploadlink",
+      "https://airbnb-clone-coral-six-59.vercel.app/uploadlink",
       {
         link: photoLink,
       }
@@ -26,7 +26,7 @@ const PhotosUploader = ({ addedPhotos, onChange }) => {
       formData.append("photos", files[i]);
     }
     const { data } = await axios.post(
-      "https://airbnb-clone-tawny-chi.vercel.app/upload",
+      "https://airbnb-clone-coral-six-59.vercel.app/upload",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );

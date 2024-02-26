@@ -14,7 +14,7 @@ export default function PlacePage() {
       return;
     }
     axios
-      .get(`https://airbnb-clone-tawny-chi.vercel.app/places/${id}`)
+      .get(`https://airbnb-clone-coral-six-59.vercel.app/places/${id}`)
       .then((response) => {
         setPlace(response.data);
       });

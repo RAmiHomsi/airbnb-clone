@@ -44,7 +44,7 @@ export default function BookingWidget({ place }) {
       totalPrice,
     };
     const { data } = await axios.post(
-      "https://airbnb-clone-tawny-chi.vercel.app/booking",
+      "https://airbnb-clone-coral-six-59.vercel.app/booking",
       info
     );
     const bookingId = data._id;

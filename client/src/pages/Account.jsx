@@ -14,7 +14,7 @@ const Account = () => {
   }
 
   async function logout() {
-    await axios.post("https://airbnb-clone-tawny-chi.vercel.app/logout");
+    await axios.post("https://airbnb-clone-coral-six-59.vercel.app/logout");
     setRedirect("/");
     setUser(null);
   }

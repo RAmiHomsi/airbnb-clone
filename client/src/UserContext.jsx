@@ -10,7 +10,7 @@ export function UserContextProvider({ children }) {
   useEffect(() => {
     if (!user) {
       axios
-        .get("https://airbnb-clone-tawny-chi.vercel.app/profile")
+        .get("https://airbnb-clone-coral-six-59.vercel.app/profile")
         .then(({ data }) => {
           setUser(data);
           setReady(true);

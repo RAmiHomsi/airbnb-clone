@@ -9,11 +9,14 @@ export default function RegisterPage() {
   async function registerUser(ev) {
     ev.preventDefault();
     try {
-      await axios.post("https://airbnb-clone-tawny-chi.vercel.app/register", {
-        name,
-        email,
-        password,
-      });
+      await axios.post(
+        "https://airbnb-clone-coral-six-59.vercel.app/register",
+        {
+          name,
+          email,
+          password,
+        }
+      );
       alert("Registration successful. Now you can log in");
     } catch (e) {
       alert(e + "Registration failed. Please try again later");

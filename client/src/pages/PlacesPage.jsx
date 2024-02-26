@@ -9,7 +9,7 @@ const PlacesPage = () => {
 
   useEffect(() => {
     axios
-      .get("https://airbnb-clone-tawny-chi.vercel.app/user-places")
+      .get("https://airbnb-clone-coral-six-59.vercel.app/user-places")
       .then(({ data }) => {
         setPlaces(data);
       });

@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { data } from "autoprefixer";
 
 export const UserContext = createContext({});
 
@@ -7,7 +8,7 @@ export function UserContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    if (!user && !ready) {
+    if (!user) {
       axios
         .get("https://airbnb-clone-tawny-chi.vercel.app/profile")
         .then(({ data }) => {
@@ -15,7 +16,7 @@ export function UserContextProvider({ children }) {
           setReady(true);
         });
     }
-  }, [user, ready, setUser]);
+  }, []);
   return (
     <UserContext.Provider value={{ user, setUser, ready }}>
       {children}

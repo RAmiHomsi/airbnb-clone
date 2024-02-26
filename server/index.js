@@ -23,7 +23,7 @@ app.use(cookieParser()); //to read cookies and bring tokens
 app.use(
   cors({
     origin: ["https://airbnb-clone-cfkm.vercel.app", "http://localhost:5173"],
-    methods: ["POST", "GET"],
+    methods: ["POST", "GET", "DELETE", "PUT"],
     credentials: true,
   })
 );

@@ -21,9 +21,6 @@ app.use(express.json());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(cookieParser()); //to read cookies and bring tokens
 
-// Allow all origins
-app.use(cors());
-
 // Allow specific origin(s)
 app.use(
   cors({

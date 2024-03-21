@@ -10,6 +10,7 @@ const Booking = require("./models/booking");
 const mime = require("mime-types");
 const fs = require("fs");
 const multer = require("multer");
+const imageDownloader = require("image-downloader");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 require("dotenv").config();
